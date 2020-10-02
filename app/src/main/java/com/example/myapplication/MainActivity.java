@@ -4,11 +4,13 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.myapplication.Models.product;
 import com.example.myapplication.app.AppConfig;
 import com.example.myapplication.app.AppController;
 import com.example.myapplication.helper.SQLiteHandler;
 import com.example.myapplication.helper.SessionManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,40 +18,76 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
   private TextView txtName;
   private TextView txtEmail;
   private Button btnLogout;
   private String TAG ;
+  Toolbar toolbar ;
 
+  @Override
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    switch(item.getItemId()) {
+      case R.id.logout: logoutUser() ;return true ;
+      case R.id.item2: Toast.makeText(getApplicationContext() ,"Cart Clicked" ,Toast.LENGTH_LONG).show();return true  ;
+
+    }
+
+    return super.onOptionsItemSelected(item);
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+     MenuInflater inflater = getMenuInflater() ;
+     inflater.inflate(R.menu.example_menu,menu);
+     return true ;
+  }
+
+  ListView list;
   private SQLiteHandler db;
   private SessionManager session;
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     TAG= "MainView" ;
+    Log.d(TAG, "The problem is in onCreate") ;
     txtName = (TextView) findViewById(R.id.name);
     txtEmail = (TextView) findViewById(R.id.email);
     btnLogout = (Button) findViewById(R.id.btnLogout);
+     toolbar = findViewById(R.id.toolbar) ;
+    setSupportActionBar(toolbar);
+
+
+    list = findViewById(R.id.list);
 
     // SqLite database handler
     db = new SQLiteHandler(getApplicationContext());
 
     // session manager
     session = new SessionManager(getApplicationContext());
-
+    Log.d(TAG, "session") ;
     if (!session.isLoggedIn()) {
       logoutUser();
     }
@@ -64,7 +102,7 @@ public class MainActivity extends Activity {
     txtName.setText(name);
     txtEmail.setText(email);
     getItems() ;
-
+    Log.d(TAG, "display") ;
     // Logout button click event
     btnLogout.setOnClickListener(new View.OnClickListener() {
 
@@ -76,12 +114,13 @@ public class MainActivity extends Activity {
 
 
   }
+
   private void getItems() {
     // Tag used to cancel the request
     String tag_string_req = "req_login";
 
 
-    StringRequest strReq = new StringRequest(Request.Method.GET,
+    StringRequest strReq = new StringRequest(Request.Method.POST,
       AppConfig.URL_GetItems, new Response.Listener<String>() {
 
       @Override
@@ -89,11 +128,21 @@ public class MainActivity extends Activity {
 
 
         try {
-          JSONArray jObj = new JSONArray(response);
+          Log.d(TAG, "The retrieved sting" + response) ;
+          JSONArray jObj = new JSONArray(response.substring(1,response.length()));
+          ArrayList<product> arrayList = new ArrayList<product>();
+          for(int i=0 ; i < jObj.length() ; i++) {
+            JSONObject pro = (JSONObject) jObj.get(i);
+            arrayList.add( new product(pro.getString("uid") , pro.getString("name") ,pro.getDouble("price") ,
+              pro.getString("image_url") , pro.getString("description") )) ;
+
+          }
+          //CustomAdapter customAdapter = new CustomAdapter(this, arrayList);
+          //list.setAdapter(customAdapter);
 
 
 
-          Log.d(TAG, "Length of Array" + jObj.length()) ;
+
         } catch (JSONException e) {
           // JSON error
           e.printStackTrace();
@@ -116,7 +165,7 @@ public class MainActivity extends Activity {
       protected Map<String, String> getParams() {
         // Posting parameters to login url
         Map<String, String> params = new HashMap<String, String>();
-        params.put("email", "any");
+        params.put("getItems", "any");
 
 
         return params;
