@@ -31,6 +31,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,14 +43,21 @@ public class MainActivity extends AppCompatActivity {
   private TextView txtName;
   private TextView txtEmail;
   private Button btnLogout;
-  private String TAG ;
-  Toolbar toolbar ;
+  private String TAG;
+  Toolbar toolbar;
+  RecyclerView mRecyclerView;
+  RecyclerView.Adapter mAdapter;
+  RecyclerView.LayoutManager mLayoutManager;
 
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-    switch(item.getItemId()) {
-      case R.id.logout: logoutUser() ;return true ;
-      case R.id.item2: Toast.makeText(getApplicationContext() ,"Cart Clicked" ,Toast.LENGTH_LONG).show();return true  ;
+    switch (item.getItemId()) {
+      case R.id.logout:
+        logoutUser();
+        return true;
+      case R.id.item2:
+        Toast.makeText(getApplicationContext(), "Cart Clicked", Toast.LENGTH_LONG).show();
+        return true;
 
     }
 
@@ -57,9 +66,9 @@ public class MainActivity extends AppCompatActivity {
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-     MenuInflater inflater = getMenuInflater() ;
-     inflater.inflate(R.menu.example_menu,menu);
-     return true ;
+    MenuInflater inflater = getMenuInflater();
+    inflater.inflate(R.menu.example_menu, menu);
+    return true;
   }
 
   ListView list;
@@ -71,23 +80,23 @@ public class MainActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    TAG= "MainView" ;
-    Log.d(TAG, "The problem is in onCreate") ;
+    TAG = "MainView";
+    Log.d(TAG, "The problem is in onCreate");
     txtName = (TextView) findViewById(R.id.name);
     txtEmail = (TextView) findViewById(R.id.email);
     btnLogout = (Button) findViewById(R.id.btnLogout);
-     toolbar = findViewById(R.id.toolbar) ;
+    toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
 
-    list = findViewById(R.id.list);
+    //list = findViewById(R.id.list);
 
     // SqLite database handler
     db = new SQLiteHandler(getApplicationContext());
 
     // session manager
     session = new SessionManager(getApplicationContext());
-    Log.d(TAG, "session") ;
+    Log.d(TAG, "session");
     if (!session.isLoggedIn()) {
       logoutUser();
     }
@@ -101,8 +110,8 @@ public class MainActivity extends AppCompatActivity {
     // Displaying the user details on the screen
     txtName.setText(name);
     txtEmail.setText(email);
-    getItems() ;
-    Log.d(TAG, "display") ;
+    getItems();
+    Log.d(TAG, "display");
     // Logout button click event
     btnLogout.setOnClickListener(new View.OnClickListener() {
 
@@ -128,19 +137,22 @@ public class MainActivity extends AppCompatActivity {
 
 
         try {
-          Log.d(TAG, "The retrieved sting" + response) ;
-          JSONArray jObj = new JSONArray(response.substring(1,response.length()));
+          Log.d(TAG, "The retrieved sting" + response);
+          JSONArray jObj = new JSONArray(response.substring(1, response.length()));
           ArrayList<product> arrayList = new ArrayList<product>();
-          for(int i=0 ; i < jObj.length() ; i++) {
+          for (int i = 0; i < jObj.length(); i++) {
             JSONObject pro = (JSONObject) jObj.get(i);
-            arrayList.add( new product(pro.getString("uid") , pro.getString("name") ,pro.getDouble("price") ,
-              pro.getString("image_url") , pro.getString("description") )) ;
+            //String uid, String name, double price, String desc, String image_url
+            arrayList.add(new product(pro.getString("uid"), pro.getString("name"), pro.getDouble("price"),
+              pro.getString("description"), pro.getString("image_url")));
 
           }
-          //CustomAdapter customAdapter = new CustomAdapter(this, arrayList);
-          //list.setAdapter(customAdapter);
-
-
+          mRecyclerView = findViewById(R.id.recyclerView);
+          mRecyclerView.setHasFixedSize(true);
+          mLayoutManager = new LinearLayoutManager(getApplicationContext());
+          mAdapter = new ExampleAdapter(arrayList);
+          mRecyclerView.setLayoutManager(mLayoutManager);
+          mRecyclerView.setAdapter(mAdapter);
 
 
         } catch (JSONException e) {
@@ -180,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
   /**
    * Logging out the user. Will set isLoggedIn flag to false in shared
    * preferences Clears the user data from sqlite users table
-   * */
+   */
   private void logoutUser() {
     session.setLogin(false);
 

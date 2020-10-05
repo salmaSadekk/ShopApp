@@ -47,6 +47,7 @@
       android:textAllCaps="false"
       android:textColor="@color/white"
       android:textSize="15dp" />
+    <!--
     <ListView
       android:id = "@+id/list"
       android:layout_width = "wrap_content"
@@ -55,7 +56,16 @@
       android:dividerHeight = "1dp"
       android:footerDividersEnabled = "false"
       android:headerDividersEnabled = "false"
-      />
+      /> -->
+<androidx.recyclerview.widget.RecyclerView
+  android:id ="@+id/recyclerView"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:layout_below="@+id/btnLogout"
+  android:padding="4dp"
+  android:scrollbars="vertical"
+
+  />
   </LinearLayout>
 
 
