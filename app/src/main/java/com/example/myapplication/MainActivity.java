@@ -38,16 +38,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity {
-
+//public class MainActivity extends AppCompatActivity implements ExampleAdapter.ExampleViewHolder.onItemListener {
+public class MainActivity extends AppCompatActivity  {
   private TextView txtName;
   private TextView txtEmail;
   private Button btnLogout;
+  Button TestItem ;
   private String TAG;
   Toolbar toolbar;
+  Button mapsButton ;
   RecyclerView mRecyclerView;
   RecyclerView.Adapter mAdapter;
   RecyclerView.LayoutManager mLayoutManager;
+
 
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -86,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
     txtEmail = (TextView) findViewById(R.id.email);
     btnLogout = (Button) findViewById(R.id.btnLogout);
     toolbar = findViewById(R.id.toolbar);
+    TestItem = findViewById(R.id.TestItem) ;
+    mapsButton = findViewById(R.id.btnMap) ;
     setSupportActionBar(toolbar);
 
 
@@ -110,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
     // Displaying the user details on the screen
     txtName.setText(name);
     txtEmail.setText(email);
-    getItems();
+    GetItems();
     Log.d(TAG, "display");
     // Logout button click event
     btnLogout.setOnClickListener(new View.OnClickListener() {
@@ -120,11 +125,82 @@ public class MainActivity extends AppCompatActivity {
         logoutUser();
       }
     });
+    TestItem.setOnClickListener(new View.OnClickListener() {
 
+      @Override
+      public void onClick(View v) {
+        getItemDetails() ;
+      }
+    });
+    mapsButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        Intent n = new Intent(getApplicationContext(), MapsActivity.class) ;
+        startActivity(n);
+      }
+    });
 
   }
 
-  private void getItems() {
+  private void getItemDetails(){
+
+
+  }
+  private void GetItems() {
+
+    final String url =  AppConfig.URL_GetItems + "?getItems=9";
+    String tag_string_req = "req_login" ;
+
+
+    StringRequest strReq = new StringRequest(Request.Method.GET,
+      AppConfig.URL_GetItems, new Response.Listener<String>() {
+
+      @Override
+      public void onResponse(String response) {
+
+
+        try {
+          Log.d(TAG, "The retrieved sting" + response);
+          JSONArray jObj = new JSONArray(response);
+          ArrayList<product> arrayList = new ArrayList<product>();
+          for (int i = 0; i < jObj.length(); i++) {
+            JSONObject pro = (JSONObject) jObj.get(i);
+            //String uid, String name, double price, String desc, String image_url
+            arrayList.add(new product(pro.getString("uid"), pro.getString("name"), pro.getDouble("price"),
+              pro.getString("description"), pro.getString("image_url")));
+
+          }
+          mRecyclerView = findViewById(R.id.recyclerView);
+          mRecyclerView.setHasFixedSize(true);
+          mLayoutManager = new LinearLayoutManager(getApplicationContext());
+          mAdapter = new ExampleAdapter(arrayList);
+          mRecyclerView.setLayoutManager(mLayoutManager);
+          mRecyclerView.setAdapter(mAdapter);
+
+
+        } catch (JSONException e) {
+          // JSON error
+          e.printStackTrace();
+          Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+      }
+    }, new Response.ErrorListener() {
+
+      @Override
+      public void onErrorResponse(VolleyError error) {
+        Log.e(TAG, "Login Error: " + error.getMessage());
+        Toast.makeText(getApplicationContext(),
+          error.getMessage(), Toast.LENGTH_LONG).show();
+
+      }
+    }) ;
+    AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+  }
+
+
+
+  /*private void getItems() {
     // Tag used to cancel the request
     String tag_string_req = "req_login";
 
@@ -187,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Adding request to request queue
     AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-  }
+  } */
 
   /**
    * Logging out the user. Will set isLoggedIn flag to false in shared
@@ -203,4 +279,10 @@ public class MainActivity extends AppCompatActivity {
     startActivity(intent);
     finish();
   }
+/*
+  @Override
+  public void onNoteClick(int position) {
+    Intent intent = new Intent(this ,RegisterActivity.class) ;
+    startActivity(intent) ;
+  } */
 }

@@ -118,7 +118,7 @@ public class LoginActivity extends Activity {
         hideDialog();
 
         try {
-          JSONObject jObj = new JSONObject(response.substring(1,response.length()));
+          JSONObject jObj = new JSONObject(response);
           boolean error = jObj.getBoolean("error");
 
           // Check for error node in json

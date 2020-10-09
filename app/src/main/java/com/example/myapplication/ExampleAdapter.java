@@ -20,17 +20,41 @@ import java.util.ArrayList;
 public  class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleViewHolder> {
   ArrayList <product> exampleList ;
   String TAG = "Adapter" ;
-  public static class ExampleViewHolder extends RecyclerView.ViewHolder {
+
+
+  public static class ExampleViewHolder extends RecyclerView.ViewHolder{
     ImageView ImageView ;
     TextView TextView1 ;
     TextView TextView2 ;
+    onItemClickListener mListener ;
 
 
-    public ExampleViewHolder(View itemView) {
+
+
+    public interface onItemClickListener{
+      void onItemClick(int position) ;
+    }
+    public void setOnItemClickListener(onItemClickListener listener ) {
+      mListener = listener;
+    }
+
+    public ExampleViewHolder(View itemView, onItemClickListener listener ) {
       super(itemView) ;
       ImageView = itemView.findViewById(R.id.images) ;
       TextView1 = itemView.findViewById(R.id.T1) ;
       TextView2 = itemView.findViewById(R.id.T2) ;
+      itemView.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+         if(listener != null) {
+           int position = getAdapterPosition();
+           if(position!=RecyclerView.NO_POSITION) {
+             listener.onItemClick(position);
+           }
+         }
+        }
+      });
+
 
     }
   }
@@ -42,7 +66,9 @@ public  class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.Example
   @Override
   public ExampleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.example_item , parent,false);
-    ExampleViewHolder evh = new ExampleViewHolder(v) ;
+
+
+    ExampleViewHolder evh = new ExampleViewHolder(v , null) ;
     return evh ;
   }
 
