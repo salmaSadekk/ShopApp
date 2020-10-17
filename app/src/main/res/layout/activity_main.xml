@@ -42,7 +42,7 @@
       android:layout_height="wrap_content"
       android:layout_marginTop="40dip"
       android:background="@color/btn_logut_bg"
-      android:text="@string/btn_logout"
+      android:text="test item"
       android:textAllCaps="false"
       android:textColor="@color/white"
       android:textSize="15dp" />

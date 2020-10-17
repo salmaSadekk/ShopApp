@@ -143,17 +143,23 @@ public class MainActivity extends AppCompatActivity  {
   }
 
   private void getItemDetails(){
+    Intent n  = new Intent(MainActivity.this , DetailsActivity.class) ;
+    n.putExtra("product", new product("9", "eggs", 0,
+      "whatever", "https://www.seriouseats.com/recipes/images/2017/08/5708631471_06fed03518_o-1500x1125.jpg" , 0));
+    startActivity(n );
 
 
   }
   private void GetItems() {
 
-    final String url =  AppConfig.URL_GetItems + "?getItems=9";
+    //final String url =  AppConfig.URL_GetDetailItems+ "?getItems=9";
     String tag_string_req = "req_login" ;
 
-
+    Log.d(TAG, "GETITEMS" );
+    String url = String.format( AppConfig.URL_GetItems+"?getItems=%1$s",9);
+    //AppConfig.URL_GetDetailItems+ "?getItems=9"
     StringRequest strReq = new StringRequest(Request.Method.GET,
-      AppConfig.URL_GetItems, new Response.Listener<String>() {
+     url , new Response.Listener<String>() {
 
       @Override
       public void onResponse(String response) {
@@ -166,8 +172,8 @@ public class MainActivity extends AppCompatActivity  {
           for (int i = 0; i < jObj.length(); i++) {
             JSONObject pro = (JSONObject) jObj.get(i);
             //String uid, String name, double price, String desc, String image_url
-            arrayList.add(new product(pro.getString("uid"), pro.getString("name"), pro.getDouble("price"),
-              pro.getString("description"), pro.getString("image_url")));
+            arrayList.add(new product(pro.getString("uid"), pro.getString("name"), 0,
+              pro.getString("description"), pro.getString("image_url") , 0));
 
           }
           mRecyclerView = findViewById(R.id.recyclerView);
@@ -200,75 +206,6 @@ public class MainActivity extends AppCompatActivity  {
 
 
 
-  /*private void getItems() {
-    // Tag used to cancel the request
-    String tag_string_req = "req_login";
-
-
-    StringRequest strReq = new StringRequest(Request.Method.POST,
-      AppConfig.URL_GetItems, new Response.Listener<String>() {
-
-      @Override
-      public void onResponse(String response) {
-
-
-        try {
-          Log.d(TAG, "The retrieved sting" + response);
-          JSONArray jObj = new JSONArray(response.substring(1, response.length()));
-          ArrayList<product> arrayList = new ArrayList<product>();
-          for (int i = 0; i < jObj.length(); i++) {
-            JSONObject pro = (JSONObject) jObj.get(i);
-            //String uid, String name, double price, String desc, String image_url
-            arrayList.add(new product(pro.getString("uid"), pro.getString("name"), pro.getDouble("price"),
-              pro.getString("description"), pro.getString("image_url")));
-
-          }
-          mRecyclerView = findViewById(R.id.recyclerView);
-          mRecyclerView.setHasFixedSize(true);
-          mLayoutManager = new LinearLayoutManager(getApplicationContext());
-          mAdapter = new ExampleAdapter(arrayList);
-          mRecyclerView.setLayoutManager(mLayoutManager);
-          mRecyclerView.setAdapter(mAdapter);
-
-
-        } catch (JSONException e) {
-          // JSON error
-          e.printStackTrace();
-          Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-
-      }
-    }, new Response.ErrorListener() {
-
-      @Override
-      public void onErrorResponse(VolleyError error) {
-        Log.e(TAG, "Login Error: " + error.getMessage());
-        Toast.makeText(getApplicationContext(),
-          error.getMessage(), Toast.LENGTH_LONG).show();
-
-      }
-    }) {
-
-      @Override
-      protected Map<String, String> getParams() {
-        // Posting parameters to login url
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("getItems", "any");
-
-
-        return params;
-      }
-
-    };
-
-    // Adding request to request queue
-    AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-  } */
-
-  /**
-   * Logging out the user. Will set isLoggedIn flag to false in shared
-   * preferences Clears the user data from sqlite users table
-   */
   private void logoutUser() {
     session.setLogin(false);
 
