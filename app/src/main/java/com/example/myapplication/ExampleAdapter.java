@@ -17,50 +17,49 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public  class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleViewHolder> {
+public  class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleViewHolder>  {
   ArrayList <product> exampleList ;
+  OnItemClicked mListener ;
   String TAG = "Adapter" ;
 
+  public interface OnItemClicked {
+    void onItemClick(int position) ;
+  }
+  public ExampleAdapter(ArrayList<product> list , OnItemClicked listener){
+    exampleList = list ;
+    this.mListener =listener ;
+  }
 
-  public static class ExampleViewHolder extends RecyclerView.ViewHolder{
+
+  public static class ExampleViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
     ImageView ImageView ;
     TextView TextView1 ;
     TextView TextView2 ;
-    onItemClickListener mListener ;
+    OnItemClicked onItemClicked ;
 
 
 
 
-    public interface onItemClickListener{
-      void onItemClick(int position) ;
-    }
-    public void setOnItemClickListener(onItemClickListener listener ) {
-      mListener = listener;
-    }
-
-    public ExampleViewHolder(View itemView, onItemClickListener listener ) {
+    public ExampleViewHolder(View itemView , OnItemClicked onItemClicked) {
       super(itemView) ;
       ImageView = itemView.findViewById(R.id.images) ;
       TextView1 = itemView.findViewById(R.id.T1) ;
       TextView2 = itemView.findViewById(R.id.T2) ;
-      itemView.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-         if(listener != null) {
-           int position = getAdapterPosition();
-           if(position!=RecyclerView.NO_POSITION) {
-             listener.onItemClick(position);
-           }
-         }
-        }
-      });
+      this.onItemClicked = onItemClicked ;
+      itemView.setOnClickListener(this);
+
 
 
     }
+
+    @Override
+    public void onClick(View v) {
+      onItemClicked.onItemClick(getAdapterPosition());
+    }
+
+
   }
-  public ExampleAdapter(ArrayList<product> list){
-  exampleList = list ;
-  }
+
 
   @NonNull
   @Override

@@ -39,7 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 //public class MainActivity extends AppCompatActivity implements ExampleAdapter.ExampleViewHolder.onItemListener {
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity implements ExampleAdapter.OnItemClicked {
   private TextView txtName;
   private TextView txtEmail;
   private Button btnLogout;
@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity  {
           mRecyclerView = findViewById(R.id.recyclerView);
           mRecyclerView.setHasFixedSize(true);
           mLayoutManager = new LinearLayoutManager(getApplicationContext());
-          mAdapter = new ExampleAdapter(arrayList);
+          mAdapter = new ExampleAdapter(arrayList ,MainActivity.this);
           mRecyclerView.setLayoutManager(mLayoutManager);
           mRecyclerView.setAdapter(mAdapter);
 
@@ -216,6 +216,15 @@ public class MainActivity extends AppCompatActivity  {
     startActivity(intent);
     finish();
   }
+
+  @Override
+  public void onItemClick(int position) {
+    Log.d(TAG , "Click" +position) ;
+    Intent intent = new Intent( MainActivity.this , DetailsActivity.class) ;
+    startActivity(intent);
+  }
+
+
 /*
   @Override
   public void onNoteClick(int position) {

@@ -69,6 +69,7 @@ public class LoginActivity extends Activity {
     btnLogin.setOnClickListener(new View.OnClickListener() {
 
       public void onClick(View view) {
+
         String email = inputEmail.getText().toString().trim();
         String password = inputPassword.getText().toString().trim();
 
