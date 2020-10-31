@@ -54,6 +54,9 @@ public  class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.Example
 
     @Override
     public void onClick(View v) {
+      if(onItemClicked ==null) {
+        return;
+      }
       onItemClicked.onItemClick(getAdapterPosition());
     }
 
@@ -67,7 +70,7 @@ public  class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.Example
     View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.example_item , parent,false);
 
 
-    ExampleViewHolder evh = new ExampleViewHolder(v , null) ;
+    ExampleViewHolder evh = new ExampleViewHolder(v , mListener) ;
     return evh ;
   }
 

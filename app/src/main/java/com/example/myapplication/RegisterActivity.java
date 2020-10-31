@@ -34,6 +34,9 @@ public class RegisterActivity extends Activity {
   private EditText inputFullName;
   private EditText inputEmail;
   private EditText inputPassword;
+  private EditText address ;
+  private EditText phonenumber ;
+
   private ProgressDialog pDialog;
   private SessionManager session;
   private SQLiteHandler db;
@@ -46,6 +49,8 @@ public class RegisterActivity extends Activity {
     inputFullName = (EditText) findViewById(R.id.name);
     inputEmail = (EditText) findViewById(R.id.email);
     inputPassword = (EditText) findViewById(R.id.password);
+    address= (EditText) findViewById(R.id.address);
+    phonenumber = (EditText) findViewById(R.id.phonenumber);
     btnRegister = (Button) findViewById(R.id.btnRegister);
     btnLinkToLogin = (Button) findViewById(R.id.btnLinkToLoginScreen);
 
@@ -74,9 +79,11 @@ public class RegisterActivity extends Activity {
         String name = inputFullName.getText().toString().trim();
         String email = inputEmail.getText().toString().trim();
         String password = inputPassword.getText().toString().trim();
+        String Address = address.getText().toString().trim();
+        String Phonenumber = phonenumber.getText().toString().trim();
 
-        if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty()) {
-          registerUser(name, email, password);
+        if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty() && !Address.isEmpty() && !Phonenumber.isEmpty() ) {
+          registerUser(name, email, password, Address,Phonenumber);
         } else {
           Toast.makeText(getApplicationContext(),
             "Please enter your details!", Toast.LENGTH_LONG)
@@ -103,7 +110,7 @@ public class RegisterActivity extends Activity {
    * email, password) to register url
    * */
   private void registerUser(final String name, final String email,
-                            final String password) {
+                            final String password , final String address , final String phonenumber) {
     // Tag used to cancel the request
     String tag_string_req = "req_register";
 
@@ -177,6 +184,9 @@ public class RegisterActivity extends Activity {
         params.put("name", name);
         params.put("email", email);
         params.put("password", password);
+        params.put("address", address);
+        params.put("phonenumber", phonenumber);
+
 
         return params;
       }
