@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -17,12 +19,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.myapplication.Models.product;
+import com.example.myapplication.Models.shopItem;
 import com.example.myapplication.app.AppConfig;
 import com.example.myapplication.app.AppController;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,22 +39,22 @@ public class DetailsActivity extends AppCompatActivity {
   String TAG = "DetailsActivity" ;
   product Product;
   Location CurrentLocation ;
-
+  Toolbar toolbar;
   private FusedLocationProviderClient mFusedLocationProviderClient;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_details);
-    /*
-    ArrayAdapter adapter = new ArrayAdapter<String>(this,
-      R.layout.activity_listview, new String[]{"Android","IPhone","WindowsMobile","Blackberry",
-      "WebOS","Ubuntu","Windows7","Max OS X"});
-      ListView listView = (ListView) findViewById(R.id.Details);
-    listView.setAdapter(adapter) ;
-     */
-
     Intent i = getIntent();
-     Product = (product) i.getSerializableExtra("product");
+    Product = (product) i.getSerializableExtra("objectval");
+    ImageView image =  findViewById(R.id.images) ;
+    Picasso.get().load(Product.getImage_url()).into(image);
+    toolbar = findViewById(R.id.toolbar);
+    setSupportActionBar(toolbar);
+    toolbar.setTitle(Product.getName());
+
+
+     Log.d(TAG , Product.getName() ) ;
     getDeviceLocation() ;
     GetDetailsItems() ;
 
@@ -62,8 +66,7 @@ public class DetailsActivity extends AppCompatActivity {
     String tag_string_req = "req_login" ;
 
     Log.d(TAG, "GETITEMS" );
-    String url = String.format( AppConfig.URL_GetDetailItems+"?'item_id=%1$s",9);
-    //AppConfig.URL_GetDetailItems+ "?getItems=9"
+    String url = String.format( AppConfig.URL_GetDetailItems+"?item_id=%1$s",Product.getUid());
     StringRequest strReq = new StringRequest(Request.Method.GET,
       url , new Response.Listener<String>() {
 
@@ -74,19 +77,21 @@ public class DetailsActivity extends AppCompatActivity {
         try {
           Log.d(TAG, "The retrieved sting" + response);
           JSONArray jObj = new JSONArray(response);
-          ArrayList<product> arrayList = new ArrayList<product>();
+          ArrayList<shopItem> arrayList = new ArrayList<shopItem>();
           for (int i = 0; i < jObj.length(); i++) {
 
 
-            JSONObject pro = (JSONObject) jObj.get(i);
+            JSONObject shopItem = (JSONObject) jObj.get(i);
             Location loc = new Location("" ) ;
-            loc.setLatitude(pro.getDouble("lat"));
-            loc.setLongitude(pro.getDouble("long"));
+            loc.setLatitude(shopItem.getDouble("lat"));
+            loc.setLongitude(shopItem.getDouble("long"));
+
+
             float distanceInMeters= loc.distanceTo(DetailsActivity.this.CurrentLocation);
 
-            arrayList.add(new product(Product.getUid(), Product.getName(), pro.getDouble("price"),
-              Product.getDesc(), Product.getImage_url() , distanceInMeters));
-            
+            arrayList.add(new shopItem(Product.getUid(), shopItem.getString("name"),
+              shopItem.getDouble("price"), distanceInMeters ));
+
 
 
 
@@ -115,6 +120,7 @@ public class DetailsActivity extends AppCompatActivity {
     }) ;
     AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
   }
+
   private void getDeviceLocation(){
     Log.d(TAG, "getDeviceLocation: getting the devices current location");
 
@@ -157,6 +163,5 @@ public class DetailsActivity extends AppCompatActivity {
       Log.e(TAG, "getDeviceLocation: SecurityException: " + e.getMessage() );
     }
   }
-
 
 }

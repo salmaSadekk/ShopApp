@@ -16,12 +16,7 @@
     android:layout_marginRight="20dp"
     android:gravity="center"
     android:orientation="vertical" >
-
-    <TextView
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="@string/welcome"
-      android:textSize="20dp" />
+    <!--
 
     <TextView
       android:id="@+id/name"
@@ -35,8 +30,8 @@
       android:id="@+id/email"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:textSize="13dp" />
-
+      android:textSize="13dp" /> -->
+<!--
     <Button
       android:id="@+id/TestItem"
       android:layout_width="fill_parent"
@@ -67,7 +62,7 @@
       android:text="@string/btn_Maps"
       android:textAllCaps="false"
       android:textColor="@color/white"
-      android:textSize="15dp" />
+      android:textSize="15dp" /> -->
     <!--
     <ListView
       android:id = "@+id/list"

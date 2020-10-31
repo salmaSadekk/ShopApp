@@ -10,8 +10,9 @@
     layout="@layout/toolbar" />
   <ImageView
   android:id = "@+id/images"
+    android:layout_below="@+id/toolbar"
   android:layout_width="match_parent"
-  android:layout_height="100dp"
+  android:layout_height="200dp"
   android:padding="2dp"
   />
 
