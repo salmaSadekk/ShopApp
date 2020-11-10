@@ -37,9 +37,6 @@ public  class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.Example
     TextView TextView2 ;
     OnItemClicked onItemClicked ;
 
-
-
-
     public ExampleViewHolder(View itemView , OnItemClicked onItemClicked) {
       super(itemView) ;
       ImageView = itemView.findViewById(R.id.images) ;

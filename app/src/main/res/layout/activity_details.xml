@@ -15,11 +15,23 @@
   android:layout_height="200dp"
   android:padding="2dp"
   />
-
+<!--
   <ListView
     android:id="@+id/Details"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" >
   </ListView>
+-->
+
+  <androidx.recyclerview.widget.RecyclerView
+
+    android:id ="@+id/recyclerView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/images"
+    android:padding="4dp"
+    android:scrollbars="vertical"
+
+    />
 
 </RelativeLayout>
