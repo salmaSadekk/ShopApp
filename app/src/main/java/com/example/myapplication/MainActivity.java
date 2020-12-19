@@ -157,7 +157,8 @@ public class MainActivity extends AppCompatActivity implements ExampleAdapter.On
         logoutUser();
         return true;
       case R.id.item2:
-        Toast.makeText(getApplicationContext(), "Cart Clicked", Toast.LENGTH_LONG).show();
+        Intent cart = new Intent(MainActivity.this, CartActivity.class) ;
+        startActivity(cart);
         return true;
       case R.id.map:
         Intent n = new Intent(getApplicationContext(), MapsActivity.class) ;
