@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -76,7 +77,7 @@ String TAG = "CartActivity" ;
             arrayList.add( new cartItem(cartitem.getString("uid"), cartitem.getString("productname"),
               cartitem.getString("shopname"), new Location("")));
             arrayList.get(i).getLocation().setLongitude(Double.parseDouble(cartitem.getString("long")));
-            arrayList.get(i).getLocation().setLongitude(Double.parseDouble(cartitem.getString("lat")));
+            arrayList.get(i).getLocation().setLatitude(Double.parseDouble(cartitem.getString("lat")));
 
           }
           mRecyclerView = findViewById(R.id.recyclerView);
@@ -121,7 +122,15 @@ String TAG = "CartActivity" ;
       @Override
       public void onClick(DialogInterface dialog, int which) {
 
-        Intent n = new Intent(CartActivity.this , MapsActivity.class) ;
+      //  Intent n = new Intent(CartActivity.this , MapsActivity.class) ;
+        Double lat = arrayList.get(position).getLocation().getLatitude() ;
+        Double lon = arrayList.get(position).getLocation().getLongitude() ;
+        Log.d(TAG , "latitude: " + lat + "   longitude: " + lon) ;
+        String q = "q= " + lat + ", " + lon;
+        Uri gmmIntentUri = Uri.parse("google.navigation:" + q);
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        startActivity(mapIntent);
       }
     });
     builder.setNeutralButton("Delete Location", new DialogInterface.OnClickListener() {
